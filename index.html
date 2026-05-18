@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Practico · Gestão para Delivery</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.10.0/dist/tabler-icons.min.css"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --black:#0A0A0A;
+  --white:#FFFFFF;
+  --gray-50:#FAFAFA;
+  --gray-100:#F5F5F5;
+  --gray-200:#E8E8E8;
+  --gray-400:#AEAEAE;
+  --gray-600:#666;
+  --gray-800:#2A2A2A;
+  --blue:#2563A8;
+  --blue-light:#EFF6FF;
+  --font:'Segoe UI',system-ui,-apple-system,sans-serif;
+  --nav-h:64px
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--white);color:var(--black);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+nav{position:fixed;top:0;left:0;right:0;z-index:900;height:var(--nav-h);display:flex;align-items:center;justify-content:space-between;padding:0 48px;background:rgba(255,255,255,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--gray-200)}
+.nav-logo{display:flex;align-items:center;gap:10px;cursor:pointer;text-decoration:none;border:none;background:none}
+.nav-logo-name{font-size:16px;font-weight:800;color:var(--black);letter-spacing:-.4px}
+.nav-links{display:flex;align-items:center;gap:4px}
+.nav-link{font-size:14px;font-weight:500;color:var(--gray-600);padding:8px 14px;border-radius:8px;border:none;background:none;cursor:pointer;font-family:var(--font);transition:all .15s}
+.nav-link:hover{color:var(--black);background:var(--gray-100)}
+.nav-right{display:flex;align-items:center;gap:10px}
+.btn-signin{font-size:14px;font-weight:500;color:var(--gray-800);padding:8px 16px;border-radius:8px;border:1px solid var(--gray-200);background:var(--white);cursor:pointer;font-family:var(--font);transition:all .15s}
+.btn-signin:hover{border-color:var(--gray-400);background:var(--gray-50)}
+.btn-start{font-size:14px;font-weight:700;color:var(--white);padding:9px 20px;border-radius:9px;border:none;background:var(--black);cursor:pointer;font-family:var(--font);transition:all .15s;letter-spacing:-.2px}
+.btn-start:hover{background:var(--gray-800);transform:translateY(-1px)}
+.auth-bg{position:fixed;inset:0;z-index:850;display:none}
+.auth-bg.open{display:block}
+.auth-box{position:fixed;top:72px;right:44px;z-index:950;width:360px;background:var(--white);border:1px solid var(--gray-200);border-radius:18px;padding:28px;box-shadow:0 8px 40px rgba(0,0,0,0.1);display:none}
+.auth-box.open{display:block;animation:abox .18s ease}
+@keyframes abox{from{opacity:0;transform:translateY(-8px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+.auth-tabs{display:flex;gap:2px;background:var(--gray-100);border-radius:10px;padding:3px;margin-bottom:22px}
+.auth-tab{flex:1;padding:8px;border-radius:8px;border:none;background:transparent;color:var(--gray-400);font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font);transition:all .15s}
+.auth-tab.on{background:var(--white);color:var(--black);box-shadow:0 1px 3px rgba(0,0,0,0.08)}
+.auth-panel{display:none}
+.auth-panel.on{display:block}
+.af{margin-bottom:13px}
+.af label{display:block;font-size:11px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.6px;margin-bottom:5px}
+.af input{width:100%;padding:10px 13px;background:var(--gray-50);border:1px solid var(--gray-200);border-radius:9px;font-size:14px;color:var(--black);font-family:var(--font);outline:none;transition:all .15s}
+.af input:focus{border-color:var(--black);background:var(--white)}
+.af input::placeholder{color:var(--gray-400)}
+.auth-btn{width:100%;padding:12px;background:var(--black);color:var(--white);font-size:14px;font-weight:700;border:none;border-radius:9px;cursor:pointer;font-family:var(--font);transition:all .15s;margin-top:4px;letter-spacing:-.2px}
+.auth-btn:hover{background:var(--gray-800)}
+.auth-btn:disabled{opacity:.5;cursor:not-allowed}
+.auth-or{display:flex;align-items:center;gap:12px;margin:16px 0;font-size:12px;color:var(--gray-200)}
+.auth-or::before,.auth-or::after{content:'';flex:1;height:1px;background:var(--gray-200)}
+.auth-google{width:100%;padding:11px;background:var(--white);border:1px solid var(--gray-200);border-radius:9px;color:var(--black);font-size:14px;font-weight:500;cursor:pointer;font-family:var(--font);transition:all .15s;display:flex;align-items:center;justify-content:center;gap:10px}
+.auth-google:hover{background:var(--gray-50);border-color:var(--gray-400)}
+.auth-msg{font-size:12px;min-height:16px;margin-top:10px;text-align:center;color:#DC2626}
+.auth-msg.ok{color:#16A34A}
+.auth-note{font-size:12px;color:var(--gray-400);text-align:center;margin-top:14px;line-height:1.5}
+.auth-note a{color:var(--black);font-weight:600;text-decoration:none}
+.quote-band{padding-top:calc(var(--nav-h) + 48px);padding-bottom:0;text-align:center;background:var(--white)}
+.quote-text{font-size:clamp(18px,2.2vw,26px);font-weight:500;color:var(--black);line-height:1.45;max-width:720px;margin:0 auto;letter-spacing:-.3px;font-style:italic;opacity:.85}
+.quote-text strong{font-style:normal;font-weight:700;opacity:1}
+.quote-author{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:20px}
+.quote-avatar{width:36px;height:36px;border-radius:50%;background:var(--gray-200);overflow:hidden;flex-shrink:0}
+.quote-avatar img{width:100%;height:100%;object-fit:cover}
+.quote-name{font-size:14px;font-weight:600;color:var(--gray-800)}
+.quote-role{font-size:13px;color:var(--gray-400)}
+.hero{padding:64px 80px 0;text-align:center;position:relative}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;background:var(--blue-light);border:1px solid #DBEAFE;border-radius:20px;padding:6px 14px;font-size:12px;font-weight:700;color:var(--blue);letter-spacing:.3px;margin-bottom:28px}
+.hero-dot{width:6px;height:6px;background:var(--blue);border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(1.5)}}
+h1{font-size:clamp(48px,6.5vw,90px);font-weight:900;line-height:.98;letter-spacing:-4px;color:var(--black);margin-bottom:24px}
+h1 em{font-style:normal;color:var(--blue)}
+.hero-sub{font-size:clamp(16px,1.6vw,20px);color:var(--gray-600);line-height:1.6;max-width:560px;margin:0 auto 40px}
+.hero-ctas{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:16px}
+.cta-primary{font-size:16px;font-weight:700;color:var(--white);padding:16px 36px;border-radius:12px;border:none;background:var(--black);cursor:pointer;font-family:var(--font);transition:all .2s;letter-spacing:-.3px}
+.cta-primary:hover{background:var(--gray-800);transform:translateY(-2px);box-shadow:0 12px 32px rgba(0,0,0,0.15)}
+.cta-ghost{font-size:15px;font-weight:600;color:var(--gray-600);padding:16px 24px;border-radius:12px;border:1.5px solid var(--gray-200);background:var(--white);cursor:pointer;font-family:var(--font);transition:all .15s}
+.cta-ghost:hover{color:var(--black);border-color:var(--gray-400)}
+.hero-note{font-size:13px;color:var(--gray-400);margin-bottom:72px}
+.hero-img{width:100%;max-width:1100px;margin:0 auto;border-radius:24px 24px 0 0;overflow:hidden;border:1px solid var(--gray-200);border-bottom:none;box-shadow:0 -4px 40px rgba(0,0,0,0.06)}
+.hero-img img{width:100%;height:auto;display:block;max-height:560px;object-fit:cover;object-position:top}
+.logos{background:var(--gray-50);border-top:1px solid var(--gray-200);border-bottom:1px solid var(--gray-200);padding:28px 80px;display:flex;align-items:center;gap:0;overflow:hidden}
+.logos-label{font-size:12px;font-weight:700;color:var(--gray-400);letter-spacing:.5px;text-transform:uppercase;white-space:nowrap;margin-right:48px;flex-shrink:0}
+.logos-scroll{display:flex;gap:56px;align-items:center;overflow:hidden}
+.logos-item{font-size:14px;font-weight:700;color:var(--gray-400);white-space:nowrap;letter-spacing:-.2px}
+.features{padding:120px 80px}
+.section-num{font-size:12px;font-weight:800;color:var(--gray-400);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px}
+.section-title{font-size:clamp(32px,3.5vw,52px);font-weight:900;color:var(--black);letter-spacing:-2px;line-height:1.05;margin-bottom:14px}
+.section-sub{font-size:17px;color:var(--gray-600);line-height:1.6;max-width:480px}
+.features-intro{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start;margin-bottom:80px}
+.features-list{display:flex;flex-direction:column;gap:2px}
+.feat-item{display:grid;grid-template-columns:1fr auto;align-items:center;padding:20px 0;border-bottom:1px solid var(--gray-200);cursor:pointer;transition:all .15s}
+.feat-item:first-child{border-top:1px solid var(--gray-200)}
+.feat-item:hover .feat-arrow{transform:translateX(4px)}
+.feat-left{display:flex;align-items:center;gap:16px}
+.feat-icon{width:40px;height:40px;border-radius:10px;background:var(--gray-100);display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--blue);flex-shrink:0}
+.feat-name{font-size:17px;font-weight:700;color:var(--black);letter-spacing:-.3px}
+.feat-desc{font-size:14px;color:var(--gray-600);margin-top:3px}
+.feat-arrow{font-size:16px;color:var(--gray-400);transition:transform .15s}
+.features-visual{position:sticky;top:calc(var(--nav-h) + 24px);height:520px;border-radius:20px;overflow:hidden;background:var(--gray-100);border:1px solid var(--gray-200)}
+.features-visual img{width:100%;height:100%;object-fit:cover;object-position:center;transition:opacity .3s}
+.split{padding:0 80px 120px;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
+.split.reverse{direction:rtl}
+.split.reverse>*{direction:ltr}
+.split-text{display:flex;flex-direction:column;gap:0}
+.split-img{border-radius:20px;overflow:hidden;border:1px solid var(--gray-200);background:var(--gray-50);aspect-ratio:4/3}
+.split-img img{width:100%;height:100%;object-fit:cover}
+.testimonials{background:var(--gray-50);padding:100px 80px;border-top:1px solid var(--gray-200);border-bottom:1px solid var(--gray-200)}
+.testimonials-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:48px}
+.tcard{background:var(--white);border:1px solid var(--gray-200);border-radius:16px;padding:28px;transition:all .2s}
+.tcard:hover{border-color:var(--gray-400);transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,0.06)}
+.tcard-stars{font-size:13px;color:#F59E0B;letter-spacing:2px;margin-bottom:16px}
+.tcard-text{font-size:15px;color:var(--gray-800);line-height:1.65;margin-bottom:20px;font-style:italic}
+.tcard-author{font-size:14px;font-weight:700;color:var(--black)}
+.tcard-role{font-size:12px;color:var(--gray-400);margin-top:3px}
+.pricing{padding:100px 80px;text-align:center}
+.pricing-note{font-size:15px;color:var(--gray-600);margin-top:12px;margin-bottom:56px}
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:900px;margin:0 auto}
+.plan{border:1.5px solid var(--gray-200);border-radius:20px;padding:36px;text-align:left;transition:all .2s;background:var(--white)}
+.plan:hover{border-color:var(--gray-400);transform:translateY(-3px);box-shadow:0 16px 48px rgba(0,0,0,0.06)}
+.plan.best{border-color:var(--black);background:var(--black);color:var(--white)}
+.plan-label{font-size:12px;font-weight:800;color:var(--gray-400);text-transform:uppercase;letter-spacing:.8px;margin-bottom:20px}
+.plan.best .plan-label{color:rgba(255,255,255,.4)}
+.plan-price{font-size:52px;font-weight:900;letter-spacing:-3px;line-height:1;color:var(--black)}
+.plan.best .plan-price{color:var(--white)}
+.plan-price sup{font-size:22px;font-weight:700;letter-spacing:-.5px;vertical-align:top;margin-top:12px;display:inline-block}
+.plan-price sub{font-size:16px;font-weight:500;letter-spacing:0;opacity:.5}
+.plan-period{font-size:14px;color:var(--gray-400);margin-top:6px}
+.plan.best .plan-period{color:rgba(255,255,255,.4)}
+.plan-striked{font-size:13px;color:var(--gray-400);text-decoration:line-through;margin-top:4px}
+.plan-saving{display:inline-block;background:#DCFCE7;color:#15803D;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;margin-top:6px}
+.plan.best .plan-saving{background:rgba(255,255,255,.15);color:#fff}
+.plan-div{height:1px;background:var(--gray-200);margin:24px 0}
+.plan.best .plan-div{background:rgba(255,255,255,.1)}
+.plan-features{list-style:none;margin-bottom:28px}
+.plan-features li{font-size:14px;color:var(--gray-600);padding:7px 0;border-bottom:1px solid var(--gray-100);display:flex;align-items:center;gap:10px}
+.plan-features li:last-child{border-bottom:none}
+.plan.best .plan-features li{color:rgba(255,255,255,.7);border-color:rgba(255,255,255,.07)}
+.plan-features li::before{content:'✓';color:var(--blue);font-weight:800;font-size:12px;flex-shrink:0}
+.plan.best .plan-features li::before{color:#93C5FD}
+.plan-btn{width:100%;padding:13px;border-radius:11px;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--font);border:none;letter-spacing:-.2px;transition:all .15s}
+.plan-btn.dark{background:var(--black);color:var(--white)}
+.plan-btn.dark:hover{background:var(--gray-800)}
+.plan-btn.white{background:var(--white);color:var(--black)}
+.plan-btn.white:hover{background:var(--gray-100)}
+.plan-btn.ghost{background:var(--gray-100);color:var(--black)}
+.plan-btn.ghost:hover{background:var(--gray-200)}
+.final-cta{margin:0 80px 100px;background:var(--black);border-radius:24px;padding:80px;display:flex;align-items:center;justify-content:space-between;gap:48px}
+.final-cta-title{font-size:clamp(28px,3vw,46px);font-weight:900;color:var(--white);letter-spacing:-2px;line-height:1.05}
+.final-cta-sub{font-size:16px;color:rgba(255,255,255,.45);margin-top:10px;line-height:1.5}
+.final-cta-btn{background:var(--white);color:var(--black);font-size:15px;font-weight:800;padding:16px 36px;border-radius:12px;border:none;cursor:pointer;font-family:var(--font);white-space:nowrap;letter-spacing:-.3px;transition:all .15s;flex-shrink:0}
+.final-cta-btn:hover{background:var(--gray-100);transform:translateY(-2px)}
+footer{border-top:1px solid var(--gray-200);padding:36px 80px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.footer-logo{display:flex;align-items:center;gap:8px}
+.footer-name{font-size:14px;font-weight:700;color:var(--black);letter-spacing:-.3px}
+.footer-copy{font-size:13px;color:var(--gray-400)}
+.footer-links{display:flex;gap:28px}
+.footer-link{font-size:13px;color:var(--gray-400);cursor:pointer;background:none;border:none;font-family:var(--font);transition:color .15s}
+.footer-link:hover{color:var(--black)}
+</style>
+</head>
+<body>
+<div class="auth-bg" id="auth-bg" onclick="closeAuth()"></div>
+<div class="auth-box" id="auth-box">
+  <div class="auth-tabs">
+    <button class="auth-tab on" id="atab-admin" onclick="switchTab('admin')">Administrador</button>
+    <button class="auth-tab" id="atab-gerente" onclick="switchTab('gerente')">Gerente</button>
+  </div>
+  <div class="auth-panel on" id="apanel-admin">
+    <div class="af"><label>E-mail</label><input type="email" id="a-email" placeholder="voce@empresa.com"/></div>
+    <div class="af"><label>Senha</label><input type="password" id="a-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"/></div>
+    <button class="auth-btn" id="a-btn" onclick="doLogin()">Entrar</button>
+    <div class="auth-or">ou</div>
+    <button class="auth-google" onclick="doGoogle()">
+      <svg width="18" height="18" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+      Continuar com Google
+    </button>
+    <div class="auth-msg" id="amsg-admin"></div>
+    <div class="auth-note">Novo por aqui? Crie sua conta e ganhe<br><a href="#pricing">3 meses grátis</a> sem cartão de crédito.</div>
+  </div>
+  <div class="auth-panel" id="apanel-gerente">
+    <p style="font-size:13px;color:#AAA;margin-bottom:18px;line-height:1.5">Acesso criado pelo administrador da sua conta.</p>
+    <div class="af"><label>Usuário</label><input type="text" id="g-user" placeholder="nome.usuario"/></div>
+    <div class="af"><label>Senha</label><input type="password" id="g-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doManagerLogin()"/></div>
+    <button class="auth-btn" id="g-btn" onclick="doManagerLogin()">Entrar como Gerente</button>
+    <div class="auth-msg" id="amsg-gerente"></div>
+  </div>
+</div>
+<nav>
+  <button class="nav-logo" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+    <svg width="26" height="26" viewBox="0 0 26 26" xmlns="http://www.w3.org/2000/svg">
+      <rect x="1" y="1" width="10" height="10" rx="3" fill="#2563A8"/>
+      <rect x="15" y="1" width="10" height="10" rx="3" fill="#2563A8" opacity="0.3"/>
+      <rect x="1" y="15" width="10" height="10" rx="3" fill="#2563A8" opacity="0.3"/>
+      <rect x="15" y="15" width="10" height="10" rx="3" fill="#2563A8"/>
+    </svg>
+    <span class="nav-logo-name">Practico</span>
+  </button>
+  <div class="nav-links">
+    <button class="nav-link" onclick="scroll('features')">Funcionalidades</button>
+    <button class="nav-link" onclick="scroll('pricing')">Planos</button>
+  </div>
+  <div class="nav-right">
+    <button class="btn-signin" onclick="openAuth()">Entrar</button>
+    <button class="btn-start" onclick="openAuth()">Começar grátis →</button>
+  </div>
+</nav>
+<div class="quote-band">
+  <p class="quote-text">"Antes do Practico eu passava <strong>horas numa planilha</strong> toda semana.<br>Agora levo 10 minutos e o pedido já saiu pelo WhatsApp."</p>
+  <div class="quote-author">
+    <div class="quote-avatar">
+      <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=72&q=80&auto=format&fit=crop&crop=face" alt=""/>
+    </div>
+    <div>
+      <div class="quote-name">Rafael M.</div>
+      <div class="quote-role">Proprietário · Pizzaria em São Paulo</div>
+    </div>
+  </div>
+</div>
+<section class="hero">
+  <div class="hero-eyebrow">
+    <span class="hero-dot"></span>
+    3 meses grátis para novos clientes
+  </div>
+  <h1>Gestão que sua<br>operação <em>merecia.</em></h1>
+  <p class="hero-sub">Estoque, preços, pedidos e planejamento semanal — tudo integrado, com IA, direto no navegador. Para qualquer delivery que quer crescer com controle.</p>
+  <div class="hero-ctas">
+    <button class="cta-primary" onclick="openAuth()">Começar grátis</button>
+    <button class="cta-ghost" onclick="scroll('features')">Ver funcionalidades</button>
+  </div>
+  <p class="hero-note">Sem cartão de crédito · Cancele quando quiser · Funciona no celular</p>
+  <div class="hero-img">
+    <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=1200&q=85&auto=format&fit=crop&crop=top" alt="Sistema Practico em uso"/>
+  </div>
+</section>
+<div class="logos">
+  <span class="logos-label">Funciona para</span>
+  <div class="logos-scroll">
+    <span class="logos-item">🍕 Pizzarias</span>
+    <span class="logos-item">🍔 Hamburguerias</span>
+    <span class="logos-item">🥗 Restaurantes</span>
+    <span class="logos-item">🐔 Frango Frito</span>
+    <span class="logos-item">🌮 Comida Mexicana</span>
+    <span class="logos-item">🍣 Sushi</span>
+    <span class="logos-item">🥙 Wraps & Lanches</span>
+    <span class="logos-item">🍰 Confeitarias</span>
+  </div>
+</div>
+<section class="features" id="features">
+  <div class="features-intro">
+    <div>
+      <div class="section-num">[01] Funcionalidades</div>
+      <h2 class="section-title">Tudo em<br>um só lugar.</h2>
+      <p class="section-sub">Sem planilha, sem papel, sem achismo. Dados reais para decisões certas toda semana.</p>
+    </div>
+    <div></div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start">
+    <div class="features-list">
+      <div class="feat-item" onclick="setFeat(0,this)">
+        <div class="feat-left">
+          <div class="feat-icon"><i class="ti ti-tag"></i></div>
+          <div>
+            <div class="feat-name">Importação de preços com IA</div>
+            <div class="feat-desc">Cole o WhatsApp ou envie uma foto da lista</div>
+          </div>
+        </div>
+        <span class="feat-arrow">→</span>
+      </div>
+      <div class="feat-item" onclick="setFeat(1,this)">
+        <div class="feat-left">
+          <div class="feat-icon"><i class="ti ti-box"></i></div>
+          <div>
+            <div class="feat-name">Controle de estoque</div>
+            <div class="feat-desc">Contagem semanal, exportação Excel e histórico</div>
+          </div>
+        </div>
+        <span class="feat-arrow">→</span>
+      </div>
+      <div class="feat-item" onclick="setFeat(2,this)">
+        <div class="feat-left">
+          <div class="feat-icon"><i class="ti ti-calendar-stats"></i></div>
+          <div>
+            <div class="feat-name">Planejamento automático</div>
+            <div class="feat-desc">Sistema calcula o gasto e sugere o que pedir</div>
+          </div>
+        </div>
+        <span class="feat-arrow">→</span>
+      </div>
+      <div class="feat-item" onclick="setFeat(3,this)">
+        <div class="feat-left">
+          <div class="feat-icon"><i class="ti ti-shopping-cart"></i></div>
+          <div>
+            <div class="feat-name">Pedidos via WhatsApp</div>
+            <div class="feat-desc">Compare fornecedores e envie em 2 minutos</div>
+          </div>
+        </div>
+        <span class="feat-arrow">→</span>
+      </div>
+      <div class="feat-item" onclick="setFeat(4,this)">
+        <div class="feat-left">
+          <div class="feat-icon"><i class="ti ti-users"></i></div>
+          <div>
+            <div class="feat-name">Perfis de acesso</div>
+            <div class="feat-desc">Gerentes com permissões específicas</div>
+          </div>
+        </div>
+        <span class="feat-arrow">→</span>
+      </div>
+    </div>
+    <div class="features-visual" id="feat-visual">
+      <img id="feat-img" src="https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=700&q=80&auto=format&fit=crop" alt=""/>
+    </div>
+  </div>
+</section>
+<section class="split">
+  <div class="split-text">
+    <div class="section-num">[02] Inteligência artificial</div>
+    <h2 class="section-title" style="margin-bottom:16px">IA que<br>entende sua<br>lista.</h2>
+    <p class="section-sub" style="max-width:400px">Tire uma foto da lista de preços do fornecedor, ou cole o texto do WhatsApp. A IA reconhece todos os produtos, corrige os nomes e organiza tudo automaticamente no seu catálogo.</p>
+    <div style="margin-top:28px;display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;align-items:center;gap:10px;font-size:14px;color:#444"><i class="ti ti-check" style="color:#2563A8;font-size:16px"></i> Reconhece produtos por foto ou texto</div>
+      <div style="display:flex;align-items:center;gap:10px;font-size:14px;color:#444"><i class="ti ti-check" style="color:#2563A8;font-size:16px"></i> Associa automaticamente ao seu catálogo</div>
+      <div style="display:flex;align-items:center;gap:10px;font-size:14px;color:#444"><i class="ti ti-check" style="color:#2563A8;font-size:16px"></i> Histórico de preços por fornecedor</div>
+    </div>
+  </div>
+  <div class="split-img">
+    <img src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=700&q=80&auto=format&fit=crop" alt="IA Practico"/>
+  </div>
+</section>
+<section class="split reverse" style="padding-top:0">
+  <div class="split-img">
+    <img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=700&q=80&auto=format&fit=crop" alt="Equipe"/>
+  </div>
+  <div class="split-text">
+    <div class="section-num">[03] Acesso por perfil</div>
+    <h2 class="section-title" style="margin-bottom:16px">Cada um<br>vê o que<br>precisa.</h2>
+    <p class="section-sub" style="max-width:400px">Crie logins para sua equipe com acesso restrito às telas certas. O gerente de estoque entra e só vê estoque. Você tem controle total de quem acessa o quê.</p>
+    <div style="margin-top:28px;display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;align-items:center;gap:10px;font-size:14px;color:#444"><i class="ti ti-check" style="color:#2563A8;font-size:16px"></i> Admin entra com Google ou e-mail</div>
+      <div style="display:flex;align-items:center;gap:10px;font-size:14px;color:#444"><i class="ti ti-check" style="color:#2563A8;font-size:16px"></i> Gerente entra com usuário e senha simples</div>
+      <div style="display:flex;align-items:center;gap:10px;font-size:14px;color:#444"><i class="ti ti-check" style="color:#2563A8;font-size:16px"></i> Você define quais telas cada um acessa</div>
+    </div>
+  </div>
+</section>
+<section class="testimonials">
+  <div class="section-num">[04] Clientes</div>
+  <h2 class="section-title">Quem usa,<br>não volta<br>para planilha.</h2>
+  <div class="testimonials-grid">
+    <div class="tcard">
+      <div class="tcard-stars">★★★★★</div>
+      <p class="tcard-text">"A importação por foto da lista do fornecedor é incrível. Não acreditei quando vi funcionar da primeira vez."</p>
+      <div class="tcard-author">Camila T.</div>
+      <div class="tcard-role">Gerente · Hamburgueria no RJ</div>
+    </div>
+    <div class="tcard">
+      <div class="tcard-stars">★★★★★</div>
+      <p class="tcard-text">"Reduzi o desperdício em quase 30% no primeiro mês. O planejamento semanal fez toda a diferença."</p>
+      <div class="tcard-author">Bruno K.</div>
+      <div class="tcard-role">Sócio · Rede de delivery em BH</div>
+    </div>
+    <div class="tcard">
+      <div class="tcard-stars">★★★★★</div>
+      <p class="tcard-text">"Minha equipe começou a usar sem precisar de treinamento. É simples demais. Recomendo pra qualquer pizzaria."</p>
+      <div class="tcard-author">Marcos A.</div>
+      <div class="tcard-role">Dono · Rede de pizzarias em Campinas</div>
+    </div>
+  </div>
+</section>
+<section class="pricing" id="pricing">
+  <div class="section-num" style="text-align:center">[05] Planos</div>
+  <h2 class="section-title" style="text-align:center;letter-spacing:-2.5px">Preço justo,<br>sem surpresas.</h2>
+  <p class="pricing-note">Todas as funcionalidades em todos os planos. Comece grátis, sem cartão.</p>
+  <div class="pricing-grid">
+    <div class="plan">
+      <div class="plan-label">Grátis</div>
+      <div class="plan-price"><sup>R$</sup>0</div>
+      <div class="plan-period">por 3 meses completos</div>
+      <div style="height:22px"></div>
+      <div class="plan-div"></div>
+      <ul class="plan-features">
+        <li>Todas as funcionalidades</li>
+        <li>Importação com IA</li>
+        <li>Controle de estoque</li>
+        <li>Pedidos e planejamento</li>
+        <li>Perfis de acesso</li>
+      </ul>
+      <button class="plan-btn ghost" onclick="openAuth()">Começar grátis</button>
+    </div>
+    <div class="plan best">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+        <div class="plan-label">Anual</div>
+        <span style="background:rgba(255,255,255,.12);color:#fff;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px">MELHOR OPÇÃO</span>
+      </div>
+      <div class="plan-price"><sup>R$</sup>39<sub>,90</sub></div>
+      <div class="plan-period">por mês · cobrado anualmente</div>
+      <div class="plan-striked" style="color:rgba(255,255,255,.3)">De R$ 59,90/mês</div>
+      <div class="plan-saving">Economia de R$ 240 por ano</div>
+      <div class="plan-div"></div>
+      <ul class="plan-features">
+        <li>Todas as funcionalidades</li>
+        <li>Importação com IA</li>
+        <li>Controle de estoque</li>
+        <li>Pedidos e planejamento</li>
+        <li>Perfis de acesso</li>
+      </ul>
+      <button class="plan-btn white" onclick="openAuth()">Assinar agora</button>
+    </div>
+    <div class="plan">
+      <div class="plan-label">Mensal</div>
+      <div class="plan-price"><sup>R$</sup>79<sub>,90</sub></div>
+      <div class="plan-period">por mês</div>
+      <div style="height:22px"></div>
+      <div class="plan-div"></div>
+      <ul class="plan-features">
+        <li>Todas as funcionalidades</li>
+        <li>Importação com IA</li>
+        <li>Controle de estoque</li>
+        <li>Pedidos e planejamento</li>
+        <li>Perfis de acesso</li>
+      </ul>
+      <button class="plan-btn dark" onclick="openAuth()">Começar agora</button>
+    </div>
+  </div>
+</section>
+<div class="final-cta">
+  <div>
+    <div class="final-cta-title">Pronto para ter<br>controle de verdade?</div>
+    <p class="final-cta-sub">Comece grátis hoje. 3 meses, sem cartão, sem compromisso.</p>
+  </div>
+  <button class="final-cta-btn" onclick="openAuth()">Começar grátis →</button>
+</div>
+<footer>
+  <div class="footer-logo">
+    <svg width="22" height="22" viewBox="0 0 26 26" xmlns="http://www.w3.org/2000/svg">
+      <rect x="1" y="1" width="10" height="10" rx="3" fill="#2563A8"/>
+      <rect x="15" y="1" width="10" height="10" rx="3" fill="#2563A8" opacity="0.3"/>
+      <rect x="1" y="15" width="10" height="10" rx="3" fill="#2563A8" opacity="0.3"/>
+      <rect x="15" y="15" width="10" height="10" rx="3" fill="#2563A8"/>
+    </svg>
+    <span class="footer-name">Practico</span>
+    <span class="footer-copy" style="margin-left:8px">© 2025 · practico.com.br</span>
+  </div>
+  <div class="footer-links">
+    <button class="footer-link">Privacidade</button>
+    <button class="footer-link">Termos</button>
+    <button class="footer-link">Contato</button>
+  </div>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPA_URL='https://uccydvzvytdwfnxmodiu.supabase.co';
+const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVjY3lkdnp2eXRkd2ZueG1vZGl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4MDQwMDksImV4cCI6MjA5NDM4MDAwOX0.qCPUbotLzOaR_bNXr3jxjFMmhT8adSHrhSIl1PtuXcM';
+const PORTAL_URL = 'https://gentle-ocean-012efb110.7.azurestaticapps.net';
+let sb;
+(function waitSb(){
+  if(typeof window.supabase!=='undefined'){
+    sb=window.supabase.createClient(SUPA_URL,SUPA_KEY);
+    checkSession();
+  }else setTimeout(waitSb,50);
+})();
+async function checkSession(){
+  const {data:{session}}=await sb.auth.getSession();
+  if(session) goPortal();
+}
+function goPortal(){ window.location.href=PORTAL_URL; }
+function openAuth(){
+  document.getElementById('auth-box').classList.add('open');
+  document.getElementById('auth-bg').classList.add('open');
+  setTimeout(()=>document.getElementById('a-email')?.focus(),80);
+}
+function closeAuth(){
+  document.getElementById('auth-box').classList.remove('open');
+  document.getElementById('auth-bg').classList.remove('open');
+}
+function switchTab(t){
+  ['admin','gerente'].forEach(x=>{
+    document.getElementById('atab-'+x).classList.toggle('on',x===t);
+    document.getElementById('apanel-'+x).classList.toggle('on',x===t);
+  });
+  document.getElementById('amsg-admin').textContent='';
+  document.getElementById('amsg-gerente').textContent='';
+}
+function msg(panel,text,type=''){
+  const el=document.getElementById('amsg-'+panel);
+  el.textContent=text; el.className='auth-msg'+(type?' '+type:'');
+}
+async function doLogin(){
+  const email=document.getElementById('a-email').value.trim();
+  const pass=document.getElementById('a-pass').value;
+  if(!email||!pass){msg('admin','Preencha e-mail e senha.');return;}
+  const btn=document.getElementById('a-btn');
+  btn.disabled=true;btn.textContent='Entrando...';
+  try{
+    const {error}=await sb.auth.signInWithPassword({email,password:pass});
+    if(error)throw error;
+    goPortal();
+  }catch(e){msg('admin',e.message||'Verifique seus dados.');}
+  btn.disabled=false;btn.textContent='Entrar';
+}
+async function doGoogle(){
+  try{
+    const {error}=await sb.auth.signInWithOAuth({
+      provider:'google',
+      options:{redirectTo:PORTAL_URL}
+    });
+    if(error)throw error;
+  }catch(e){msg('admin',e.message||'Erro ao conectar com Google.');}
+}
+async function doManagerLogin(){
+  const username=document.getElementById('g-user').value.trim().toLowerCase();
+  const pass=document.getElementById('g-pass').value;
+  if(!username||!pass){msg('gerente','Preencha usuário e senha.');return;}
+  const btn=document.getElementById('g-btn');
+  btn.disabled=true;btn.textContent='Verificando...';
+  try{
+    const {data,error}=await sb.from('sb_managers')
+      .select('*').eq('username',username).eq('active',true).single();
+    if(error||!data)throw new Error('Usuário não encontrado.');
+    const hash=btoa(unescape(encodeURIComponent(username+':'+pass)));
+    if(data.password_hash!==hash)throw new Error('Senha incorreta.');
+    localStorage.setItem('practico_manager',JSON.stringify({
+      id:data.id,username:data.username,
+      display_name:data.display_name,
+      allowed_pages:data.allowed_pages||[],
+      device_id:data.device_id
+    }));
+    goPortal();
+  }catch(e){msg('gerente',e.message||'Erro ao entrar.');}
+  btn.disabled=false;btn.textContent='Entrar como Gerente';
+}
+const featImgs=[
+  'https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=700&q=80&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=700&q=80&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=700&q=80&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=700&q=80&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=700&q=80&auto=format&fit=crop'
+];
+function setFeat(i,el){
+  document.querySelectorAll('.feat-item').forEach(x=>x.style.opacity='.5');
+  el.style.opacity='1';
+  const img=document.getElementById('feat-img');
+  img.style.opacity='0';
+  setTimeout(()=>{img.src=featImgs[i];img.style.opacity='1';},200);
+}
+document.querySelector('.feat-item').style.opacity='1';
+function scroll(id){document.getElementById(id).scrollIntoView({behavior:'smooth'});}
+</script>
+</body>
+</html>
